@@ -1,0 +1,44 @@
+
+<form action={% url 'slave:host_reply'%} method ="post">
+    {% csrf_token %}
+    {{ host_form }}
+<button class="btn waves-effect waves-light" type="submit" name="action">Submit
+        <i class="material-icons right"></i>
+          </button>
+</form>
+<form action={% url 'slave:room_reply'%} method ="post">
+    {% csrf_token %}
+    {{ room_form }}
+    <input type = "submit" values="Submit"/>
+</form>
+
+
+<form action= {% url 'slave:target_reply' %} method ="post">
+    {% csrf_token %}
+    {{ target_temp_form }}
+    <input type = "submit" values="Submit"/>
+</form>
+
+<form action={% url 'slave:speed_reply' %} method ="post">
+    {% csrf_token %}
+    {{ speed_form }}
+    <input type = "submit" values="Submit"/>
+</form>
+<form action= {% url 'slave:login' %} method = 'post'>
+    {% csrf_token %}
+    <label> 从机注册 </label>
+    <input type = 'submit' values = "login"/>
+</form>
+
+<form action = {% url 'slave:logout'%} method ='post'>
+    {% csrf_token %}
+    <label> 从机注销 </label>
+    <input type = 'submit' values ='login'/>
+</form>
+
+<form action = {% url 'slave:mode_reply'%} method ='post'>
+    {% csrf_token %}
+    <label> 查询模式 </label>
+    <input type = 'submit' values ='login'/>
+</form>
+

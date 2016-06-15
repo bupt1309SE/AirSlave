@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--Import Google Icon Font-->
+    <!--link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"-->
+    <link href="css/Material-Icons.css" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/nouislider.min.css"/>
+    <link type="text/css" rel="stylesheet" href="css/custom.css"/>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <title>房间空调</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col s6">
+                <div class="card-panel lime lighten-4">
+                    <div class="row">
+                        <div class="col s4 center-align">
+                            <h5>房间号</h5>
+                            <p>ROOM NUMBER</p>
+                        </div>
+                        <div class="col s8">
+                            <h5 class="flow-text">123</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s6">
+                <div class="card-panel lime lighten-4">
+                    <div class="row">
+                        <div class="col s4 center-align">
+                            <h5>工作模式</h5>
+                            <p>WORKING MODE</p>
+                        </div>
+                        <div class="col s8">
+                            <h5>冷风</h5>
+                            <p>COOL</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card-panel blue-grey lighten-4">
+                    <div class="row">
+                        <div class="col s4 center-align">
+                            <h5>设定</h5>
+                            <h5>温度</h5>
+                            <p>SET TEMP</p>
+                        </div>
+                        <div class="col s8">
+                            <a class="digit-text" id="set_temp">--℃</a>
+                            <div id="temp_slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m6">
+                <div class="card-panel blue-grey lighten-4">
+                    <div class="row">
+                        <div class="col s4 center-align">
+                            <h5>室内</h5>
+                            <h5>温度</h5>
+                            <p>ROOM TEMP</p>
+                        </div>
+                        <div class="col s8">
+                            <a class="digit-text">--℃</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card-panel blue lighten-4">
+                    <div class="row">
+                        <div class="col s4 center-align">
+                            <h5>风速</h5>
+                            <p>FAN</p>
+                        </div>
+                        <div class="col s8">
+                            <a class="wind-text" id="set_wind"></a>
+                            <a class="wind-bottom" id="set_wind_bottom"></a>
+                            <div id="wind_slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m6">
+                <div class="card blue lighten-4">
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">
+                            消费金额
+                            <i class="material-icons right">more_vert</i>
+                        </span>
+                        <p>500$</p>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title grey-text text-darken-4">
+                            标题
+                            <i class="material-icons right">close</i>
+                        </span>
+                        <p>这是详细情况</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Trigger -->
+        <a class="waves-effect waves-light btn modal-trigger" href="#modal1">高级设置</a>
+
+        <!-- Modal Structure -->
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+                <h4>房间空调初始化</h4>
+                <p> 设置房间初始信息，包括：</br>
+                    主机服务器IP地址:端口号——连接中央空调主机服务器</br>
+                    房间号——标记房间信息
+                </p>
+                <div class="container">
+                    <div class="row">
+                        <div class="input-field col s8 m6">
+                            <input id="set_ip" type="text" class="validate" value="127.0.0.1">
+                            <label for="set_ip">主机服务器IP地址</label>
+                        </div>
+                        <div class="input-field col s4 m3">
+                            <input id="set_port" type="text" class="validate" value="8080">
+                            <label for="set_port">端口号</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <input id="set_room_num" type="text" class="validate" value="525">
+                            <label for="set_room_num">房间号</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">保存</a>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="container">
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="last_name" type="text" class="validate">
+            <label for="last_name">Last Name</label>
+          </div>
+        </div>
+
+        <!-- Switch -->
+        <div class="switch">
+            <label>
+            Off
+            <input type="checkbox">
+            <span class="lever"></span>
+            On
+            </label>
+        </div>
+        
+    </div>
+    
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/nouislider.min.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+</body>
+</html>
