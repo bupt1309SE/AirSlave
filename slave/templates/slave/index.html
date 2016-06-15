@@ -136,34 +136,36 @@
 
         <!-- Modal Structure -->
         <div id="modal1" class="modal">
-            <div class="modal-content">
-                <h4>房间空调初始化</h4>
-                <p> 设置房间初始信息，包括：</br>
-                    主机服务器IP地址:端口号——连接中央空调主机服务器</br>
-                    房间号——标记房间信息
-                </p>
-                <div class="container">
-                    <div class="row">
-                        <div class="input-field col s8 m6">
-                            <input id="set_ip" type="text" class="validate" value="127.0.0.1">
-                            <label for="set_ip">主机服务器IP地址</label>
+            <form id="main_form" onsubmit="return validate()">
+                <div class="modal-content">
+                    <h4>房间空调初始化</h4>
+                    <p> 设置房间初始信息，包括：<br>
+                        主机服务器IP地址:端口号——连接中央空调主机服务器<br>
+                        房间号——标记房间信息
+                    </p>
+                    <div class="container">
+                        <div class="row">
+                            <div class="input-field col s8 m6">
+                                <input id="set_ip" type="text" class="validate" value="127.0.0.1">
+                                <label for="set_ip">主机服务器IP地址</label>
+                            </div>
+                            <div class="input-field col s4 m3">
+                                <input id="set_port" type="text" class="validate" value="8080">
+                                <label for="set_port">端口号</label>
+                            </div>
                         </div>
-                        <div class="input-field col s4 m3">
-                            <input id="set_port" type="text" class="validate" value="8080">
-                            <label for="set_port">端口号</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12 m6">
-                            <input id="set_room_num" type="text" class="validate" value="525">
-                            <label for="set_room_num">房间号</label>
+                        <div class="row">
+                            <div class="input-field col s12 m6">
+                                <input id="set_room_num" type="text" class="validate" value="525">
+                                <label for="set_room_num">房间号</label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">保存</a>
-            </div>
+                <div class="modal-footer">
+                    <input class="modal-action waves-effect waves-green btn-flat" type="submit" value="提交"/>
+                </div>
+            </form>
         </div>
 
     </div>

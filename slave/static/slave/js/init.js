@@ -7,6 +7,37 @@ $(document).ready(function(){
 $('#modal1').openModal();
 
 
+//初始化从机
+function validate() {
+    var ip = document.getElementById('set_ip').value;
+    var port = document.getElementById('set_port').value;
+    var room = document.getElementById('set_room_num').value;
+
+    $.post("login",
+    {
+        'ip':ip,
+        'port':port,
+        'room_number':room
+    },
+        function(data){
+            if (data == 1) {
+                $('#modal1').closeModal();
+                alert("成功连接中央空调！");
+                return true;
+            }
+            else if (data == 0) {
+                alert("连接失败！请重新输入IP/端口");
+                return false;
+            }
+            else {
+                alert("出错请重试！");
+                return false;
+            }
+    });
+    alert("主机未响应");
+    return false;
+}
+
 
 var tempSlider = document.getElementById('temp_slider');
 
