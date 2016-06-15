@@ -51,7 +51,7 @@ def login(request):
     if request.method == 'POST':
         res = comm_sender.connect_to_host(request.POST['ip'], request.POST['port'], request.POST['room_number'],
                                           request.get_host())
-        return res
+        return HttpResponse(res)
 
 
 @csrf_exempt

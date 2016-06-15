@@ -36,7 +36,8 @@ class CommSender:
                 return 1
             else:
                 return 0
-        except requests.exceptions.Timeout:
+        except:
+        #except requests.exceptions.Timeout:
             return 0
 
     # test whether can connect to host by mode_query
