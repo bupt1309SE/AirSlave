@@ -58,13 +58,19 @@ def login(request):
 def logout(request):
     q = BaseInfo.objects.all()[0]
     r = comm_sender.send_msg(data={'type': 'logout', 'source': q.room_number})
-    js = r.json()
-    if js['ack_nak'] == 'ACK':
-        q.is_log = 'False'
-        q.is_conn = 'False'
-        q.current_speed = 'standby'
-        q.save()
-    return HttpResponse(1)
+    print(r.text)
+    try:
+        js = r.json()
+        if js['ack_nak'] == 'ACK':
+            q.is_log = 'False'
+            q.is_conn = 'False'
+            q.current_speed = 'standby'
+            q.save()
+            return HttpResponse(1)
+        else:
+            return HttpResponse(0)
+    except:
+        return HttpResponse(0)
 
 
 def mode_reply(request):
@@ -161,6 +167,7 @@ def start_service(request):
     q = BaseInfo.objects.all()[0]
     if q.query_speed != 'None':
         q.current_speed = q.query_speed
+        print(q.current_speed)
         q.query_speed = 'None'
         q.save()
     return JsonResponse({'type': 'send', 'source': q.room_number, 'ack_nak': 'ACK'})
@@ -170,6 +177,7 @@ def start_service(request):
 # communication view
 # deal with communication with host
 def communication(request):
+    print(request.POST)
     if request.method == 'POST':
         if request.POST['type'] == 'check_temperature' and request.POST['source'] == 'host':
             return host_check_temperature(request)

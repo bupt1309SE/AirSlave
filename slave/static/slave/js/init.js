@@ -53,13 +53,13 @@ var powerPriceElement = document.getElementById('show_price');
 function mainLoop() {
     $.get("get_info",
         function (data) {
-            if (data.is_conn == "False") {
+            if (data.is_log == "True" && data.is_conn == "False") {
                 Materialize.toast("与主机连接断开,尝试重连……", 4000);
                 subLoopTimer = setTimeout('subLoop()', 4000);
             }
-            else if (data.is_conn == "True") {
+            else if (data.is_log == "True" && data.is_conn == "True") {
                 Materialize.toast("get info succeed", 1500);
-
+                Materialize.toast(data.current_speed, 1500);
                 updateUI(data);
 
                 mainLoopTimer = setTimeout('mainLoop()', 1000);
@@ -100,19 +100,19 @@ function updateUI(data) {
 
     roomTempElement.innerHTML = data.current_temp.toFixed(2) + "℃";
 
-    if (data.query_speed == "standby") {
+    if (data.current_speed == "standby") {
         windElement.innerHTML = "待机";
         windElementEN.innerHTML = "STOP";
     }
-    if (data.query_speed == "low") {
+    if (data.current_speed == "low") {
         windElement.innerHTML = "低风";
         windElementEN.innerHTML = "LOW";
     }
-    else if (data.query_speed == "medium") {
+    else if (data.current_speed == "medium") {
         windElement.innerHTML = "中风";
         windElementEN.innerHTML = "MED";
     }
-    else if (data.query_speed == "high") {
+    else if (data.current_speed == "high") {
         windElement.innerHTML = "高风";
         windElementEN.innerHTML = "HIGH";
     }
@@ -128,19 +128,11 @@ var tempSlider = document.getElementById('temp_slider');
 noUiSlider.create(tempSlider, {
         start: 25,
         step: 1,
-        connect: 'upper',
+        connect: 'lower',
         range: {
             'min': 18,
             'max': 25
-        }/*,
-        format: {
-            to: function (value) {
-                return value + '℃';
-            },
-            from: function (value) {
-                return value.replace('℃', '');
-            }
-        }*/
+        }
     }
 );
 
@@ -170,10 +162,10 @@ function updateTempSlider(type) {
 var tempSliderValueElement = document.getElementById('set_temp');
 
 tempSlider.noUiSlider.on('update', function (values, handle) {
-    tempSliderValueElement.innerHTML = values[handle] + '℃';
+    tempSliderValueElement.innerHTML = Math.round(values[handle]) + '℃';
 });
 
-tempSlider.noUiSlider.on('set', function () {
+tempSlider.noUiSlider.on('change', function () {
     //Materialize.toast( tempSlider.noUiSlider.get(),500);
     $.post("target_reply",
         {
@@ -224,12 +216,27 @@ windSlider.noUiSlider.on('update', function (values, handle) {
 
 var windArray = ["standby", "low", "medium", "high"];
 
-windSlider.noUiSlider.on('set', function () {
-    //Materialize.toast( windSlider.noUiSlider.get(),500);
+windSlider.noUiSlider.on('change', function () {
+    Materialize.toast(Math.round(windSlider.noUiSlider.get()),500);
+    //Materialize.toast(windArray[windSlider.noUiSlider.get()],500);
+
     $.post("speed_reply",
         {
-            'speed_choice': windArray[windSlider.noUiSlider.get()]
+            'speed_choice': windArray[Math.round(windSlider.noUiSlider.get())]
         }
     );
 });
+
+$('#logout').click(function logOut() {
+    $.get("logout",
+        function (data) {
+            if (data == 1)
+                Materialize.toast("注销成功", 5000);
+            else
+                alert("注销失败");
+        }
+    );
+
+});
+
 

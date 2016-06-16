@@ -44,7 +44,7 @@ class QueryQueue:
                 q.save()
                 r = self.comm_sender.send_msg(data={'type': 'require', 'source': q.room_number, 'speed': query})
                 # if query is standby, we should change to standby immediately
-                if query == 'standby':
-                    q.current_speed = q.query_speed
+                if query == 'standby' and r.json()['ack_nak'] == 'ACK':
+                    q.current_speed = 'standby'
                     q.query_speed = 'None'
                     q.save()
