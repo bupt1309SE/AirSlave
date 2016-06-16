@@ -58,8 +58,8 @@ function mainLoop() {
                 subLoopTimer = setTimeout('subLoop()', 4000);
             }
             else if (data.is_log == "True" && data.is_conn == "True") {
-                Materialize.toast("get info succeed", 1500);
-                Materialize.toast(data.current_speed, 1500);
+                //Materialize.toast("get info succeed", 1000);
+                //Materialize.toast(data.current_speed, 1000);
                 updateUI(data);
 
                 mainLoopTimer = setTimeout('mainLoop()', 1000);
@@ -104,7 +104,7 @@ function updateUI(data) {
         windElement.innerHTML = "待机";
         windElementEN.innerHTML = "STOP";
     }
-    if (data.current_speed == "low") {
+    else if (data.current_speed == "low") {
         windElement.innerHTML = "低风";
         windElementEN.innerHTML = "LOW";
     }
@@ -166,7 +166,6 @@ tempSlider.noUiSlider.on('update', function (values, handle) {
 });
 
 tempSlider.noUiSlider.on('change', function () {
-    //Materialize.toast( tempSlider.noUiSlider.get(),500);
     $.post("target_reply",
         {
             'target_temp': tempSlider.noUiSlider.get()
@@ -217,9 +216,6 @@ windSlider.noUiSlider.on('update', function (values, handle) {
 var windArray = ["standby", "low", "medium", "high"];
 
 windSlider.noUiSlider.on('change', function () {
-    Materialize.toast(Math.round(windSlider.noUiSlider.get()),500);
-    //Materialize.toast(windArray[windSlider.noUiSlider.get()],500);
-
     $.post("speed_reply",
         {
             'speed_choice': windArray[Math.round(windSlider.noUiSlider.get())]
