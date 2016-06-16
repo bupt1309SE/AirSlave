@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'^login$', views.login, name='login'),
     url(r'^logout$', views.logout, name='logout'),
     url(r'^mode_reply', views.mode_reply, name='mode_reply'),
-    url(r'^get_info',views.get_info,name='get_info'),
+    url(r'^get_info', views.get_info, name='get_info'),
 ]

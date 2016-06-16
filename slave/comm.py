@@ -53,6 +53,6 @@ class CommSender:
                 q.mode = js['mode']
                 q.is_conn = 'True'
                 q.save()
-            except requests.exceptions.Timeout:
+            except:
                 q.is_conn = 'False'
                 q.save()
