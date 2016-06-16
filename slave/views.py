@@ -64,7 +64,7 @@ def logout(request):
         q.is_conn = 'False'
         q.current_speed = 'standby'
         q.save()
-    return 1
+    return HttpResponse(1)
 
 
 def mode_reply(request):
@@ -123,7 +123,7 @@ def target_reply(request):
         q = BaseInfo.objects.all()[0]
         q.target_temp = request.POST['target_temp']
         q.save()
-        return 1
+        return HttpResponse(1)
 
 
 # query speed_reply
@@ -132,7 +132,7 @@ def target_reply(request):
 def speed_reply(request):
     if request.method == 'POST':
         query_queue.put(request.POST['speed_choice'])
-        return 1
+        return HttpResponse(1)
 
 
 # host to check current and target_temperature
@@ -179,4 +179,3 @@ def communication(request):
             return stop_service(request)
     return JsonResponse({'ack_nak': 'NAK'})
 
-###what fuck
