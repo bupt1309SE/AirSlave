@@ -22,7 +22,7 @@ function validate() {
         function (data) {
             if (data == 1) {
                 $('#modal1').closeModal();
-                alert("成功连接中央空调！");
+                Materialize.toast("成功连接中央空调！",4000);
                 document.getElementById('show_room_num').innerHTML = room;
                 mainLoopTimer = setTimeout('mainLoop()', 1000);
                 return true;
@@ -75,12 +75,28 @@ function subLoop() {
         function (data) {
             if (data.is_conn == "True") {
                 Materialize.toast("已与服务器重连", 4000);
-                mainLoopTimer = setTimeout('mainLoop()', 1000);
+                //mainLoopTimer = setTimeout('mainLoop()', 1000);
+                mainLoopTimer = setTimeout('validate()', 1000);
+                setTimeout('resendRequest()', 3000);
             }
             else {
                 Materialize.toast("重连失败，5秒后重试", 4000);
                 subLoopTimer = setTimeout('subLoop()', 5000);
             }
+        }
+    );
+}
+
+/* 重发请求 */
+function resendRequest() {
+    $.post("target_reply",
+        {
+            'target_temp': tempSlider.noUiSlider.get()
+        }
+    );
+    $.post("speed_reply",
+        {
+            'speed_choice': windArray[Math.round(windSlider.noUiSlider.get())]
         }
     );
 }
