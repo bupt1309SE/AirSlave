@@ -1,23 +1,33 @@
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 from slave.comm import CommSender
 from slave.cost_query import CostQuery
-from slave.forms import HostForm, RoomNumberForm, TargetTempForm, SpeedForm
-from slave.models import BaseInfo
+from slave.models import ConnInfo, CostInfo, QueryInfo, SensorInfo, ModeInfo, SettingInfo, RoomInfo
 from slave.sensor import Sensor
 from slave.speed_query import QueryQueue
 
 # initialize all info
-q = BaseInfo.objects.all()[0]
-q.is_log = 'False'
-q.is_conn = 'False'
-q.current_temp = 25.0
+c = ConnInfo.objects.all()[0]
+c.is_log = 'False'
+c.is_conn = 'False'
+c.save()
+
+c = CostInfo.objects.all()[0]
+c.power_price = 5.0
+c.total_cost = 0.0
+c.power_consump = 0.0
+c.save()
+
+q = QueryInfo.objects.all()[0]
 q.current_speed = 'standby'
 q.query_speed = 'None'
 q.save()
+
+s = SensorInfo.objects.all()[0]
+s.current_temp = 25.0
+s.save()
 
 # create all threads
 comm_sender = CommSender()
@@ -25,25 +35,32 @@ query_queue = QueryQueue()
 sensor = Sensor()
 cost_queryer = CostQuery()
 
+
 # Create your views here.
 
 # index view  to show all information
 def index(request):
     return render(request, 'slave/index.html')
 
+
 @csrf_exempt
 def get_info(request):
-    q = BaseInfo.objects.all()[0]
+    q = QueryInfo.objects.all()[0]
+    m = ModeInfo.objects.all()[0]
+    s = SettingInfo.objects.all()[0]
+    ss = SensorInfo.objects.all()[0]
+    c = CostInfo.objects.all()[0]
+    cc = ConnInfo.objects.all()[0]
     return JsonResponse({'current_speed': q.current_speed,
-                         'mode': q.mode,
-                         'target_temp': q.target_temp,
-                         'current_temp': q.current_temp,
+                         'mode': m.mode,
+                         'target_temp': s.target_temp,
+                         'current_temp': ss.current_temp,
                          'query_speed': q.query_speed,
-                         'power_consump': q.power_consump,
-                         'power_price': q.power_price,
-                         'total_cost': q.total_cost,
-                         'is_log': q.is_log,
-                         'is_conn': q.is_conn})
+                         'power_consump': c.power_consump,
+                         'power_price': c.power_price,
+                         'total_cost': c.total_cost,
+                         'is_log': cc.is_log,
+                         'is_conn': cc.is_conn})
 
 
 @csrf_exempt
@@ -56,9 +73,8 @@ def login(request):
 
 @csrf_exempt
 def logout(request):
-    q = BaseInfo.objects.all()[0]
+    q = RoomInfo.objects.all()[0]
     r = comm_sender.send_msg(data={'type': 'logout', 'source': q.room_number})
-    print(r.text)
     try:
         js = r.json()
         if js['ack_nak'] == 'ACK':
@@ -73,62 +89,20 @@ def logout(request):
         return HttpResponse(0)
 
 
-def mode_reply(request):
-    q = BaseInfo.objects.all()[0]
-    r = comm_sender.send_msg(data={'type': 'query_mode', 'source': q.room_number})
-    return HttpResponse(r.text)
-
-
-def setting(request):
-    q = BaseInfo.objects.all()[0]
-    host_form = HostForm({'ip_address': q.host_ip, 'port_address': q.host_port})
-    room_form = RoomNumberForm({'room_number': q.room_number})
-    target_temp_form = TargetTempForm({'target_temp': q.target_temp})
-    speed_form = SpeedForm({'speed_choice': q.current_speed})
-    return render(request, 'slave/setting.html', {
-        'host_form': host_form,
-        'room_form': room_form,
-        'target_temp_form': target_temp_form,
-        'speed_form': speed_form})
-
-
-# host_reply view
-# update host_ip  and host_port
-def host_reply(request):
-    if request.method == 'POST':
-        form = HostForm(request.POST)
-        if form.is_valid():
-            q = BaseInfo.objects.all()[0]
-            q.host_ip = form.cleaned_data['ip_address']
-            q.host_port = form.cleaned_data['port_address']
-            q.save()
-            return HttpResponseRedirect(reverse('slave:index'))
-        else:
-            return HttpResponse('Error')
-
-
-# room_reply
-# update room_number
-def room_reply(request):
-    if request.method == 'POST':
-        form = RoomNumberForm(request.POST)
-        if form.is_valid():
-            q = BaseInfo.objects.all()[0]
-            q.room_number = form.cleaned_data['room_number']
-            q.save()
-            return HttpResponseRedirect(reverse('slave:index'))
-        else:
-            return HttpResponse('Error')
-
-
 # target_temp reply
 # update target temperature
 @csrf_exempt
 def target_reply(request):
     if request.method == 'POST':
-        q = BaseInfo.objects.all()[0]
-        q.target_temp = request.POST['target_temp']
+        q = SettingInfo.objects.all()[0]
+        q.target_temp = float(request.POST['target_temp'])
         q.save()
+        m = ModeInfo.objects.all()[0]
+        s = SensorInfo.objects.all()[0]
+        if m.mode == 'cold' and q.target_temp > s.current_temp:
+            query_queue.put('standby')
+        elif m.mode == 'hot' and q.target_temp < s.current_temp:
+            query_queue.put('standby')
         return HttpResponse(1)
 
 
@@ -144,40 +118,43 @@ def speed_reply(request):
 # host to check current and target_temperature
 # return a json type with current and target temperature
 def host_check_temperature(request):
-    q = BaseInfo.objects.all()[0]
+    r = RoomInfo.objects.all()[0]
+    s = SensorInfo.objects.all()[0]
+    ss = SettingInfo.objects.all()[0]
+
     return JsonResponse(
-        {'type': 'check_temperature', 'source': q.room_number, 'ack_nak': 'ACK', 'room_temperature': q.current_temp,
-         'setting_temperature': q.target_temp})
+        {'type': 'check_temperature', 'source': r.room_number, 'ack_nak': 'ACK', 'room_temperature': s.current_temp,
+         'setting_temperature': ss.target_temp})
 
 
 # host send  'stop' message
 # slave state change to standby
 # return a json with ACK
 def stop_service(request):
-    q = BaseInfo.objects.all()[0]
+    r = RoomInfo.objects.all()[0]
+    q = QueryInfo.objects.all()[0]
     q.speed = 'standby'
     q.save()
-    return JsonResponse({'type': 'stop', 'source': q.room_number, 'ack_nak': 'ACK'})
+    return JsonResponse({'type': 'stop', 'source': r.room_number, 'ack_nak': 'ACK'})
 
 
 # host send 'start' message
 # slave change state to the latest query which is in database
 # and query_speed should remove
 def start_service(request):
-    q = BaseInfo.objects.all()[0]
+    q = QueryInfo.objects.all()[0]
+    r = RoomInfo.objects.all()[0]
     if q.query_speed != 'None':
         q.current_speed = q.query_speed
-        print(q.current_speed)
         q.query_speed = 'None'
         q.save()
-    return JsonResponse({'type': 'send', 'source': q.room_number, 'ack_nak': 'ACK'})
+    return JsonResponse({'type': 'send', 'source': r.room_number, 'ack_nak': 'ACK'})
 
 
 @csrf_exempt
 # communication view
 # deal with communication with host
 def communication(request):
-    print(request.POST)
     if request.method == 'POST':
         if request.POST['type'] == 'check_temperature' and request.POST['source'] == 'host':
             return host_check_temperature(request)
@@ -186,4 +163,3 @@ def communication(request):
         elif request.POST['type'] == 'stop' and request.POST['source'] == 'host':
             return stop_service(request)
     return JsonResponse({'ack_nak': 'NAK'})
-

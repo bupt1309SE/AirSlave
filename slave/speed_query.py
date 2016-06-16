@@ -4,7 +4,7 @@ from queue import LifoQueue
 
 from slave.comm import CommSender
 from slave.decorator import singleton
-from slave.models import BaseInfo
+from slave.models import RoomInfo,ConnInfo,QueryInfo,ModeInfo,SettingInfo,SensorInfo
 
 
 # query_queue stored temp speed_choice
@@ -26,10 +26,11 @@ class QueryQueue:
     def send_require(self):
         while True:
             time.sleep(1)
-            q = BaseInfo.objects.all()[0]
-
+            c = ConnInfo.objects.all()[0]
+            q = QueryInfo.objects.all()[0]
+            r = RoomInfo.objects.all()[0]
             # if is logout or unconnected, only flush queue
-            if q.is_log == "False" or q.is_conn == "False":
+            if c.is_log == "False" or c.is_conn == "False":
                 while not self.queue.empty():
                     self.queue.get()
                 continue
@@ -39,10 +40,18 @@ class QueryQueue:
                 query = self.queue.get()
                 while not self.queue.empty():
                     self.queue.get()
-                print(query)
+                #
+                m = ModeInfo.objects.all()[0]
+                s = SensorInfo.objects.all()[0]
+                ss = SettingInfo.objects.all()[0]
+                if m.mode == 'cold' and ss.target_temp > s.current_temp:
+                    query = 'standby'
+                elif m.mode == 'hot' and ss.target_temp < s.current_temp:
+                    query = 'standby'
+                #
                 q.query_speed = query
                 q.save()
-                r = self.comm_sender.send_msg(data={'type': 'require', 'source': q.room_number, 'speed': query})
+                r = self.comm_sender.send_msg(data={'type': 'require', 'source': r.room_number, 'speed': query})
                 # if query is standby, we should change to standby immediately
                 if query == 'standby' and r.json()['ack_nak'] == 'ACK':
                     q.current_speed = 'standby'

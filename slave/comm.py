@@ -5,13 +5,12 @@ import requests
 import requests.exceptions
 
 from slave.decorator import singleton
-from slave.models import BaseInfo
+from slave.models import ConnInfo,RoomInfo,ModeInfo
 
 
 @singleton
 class CommSender:
     def __init__(self):
-        q = BaseInfo.objects.all()[0]
         self.host_url = ''
         th = threading.Thread(target=self.test_connection)
         th.start()
@@ -28,11 +27,13 @@ class CommSender:
                               timeout=2)
             js = r.json()
             if js['ack_nak'] == 'ACK':
-                q = BaseInfo.objects.all()[0]
+                q = RoomInfo.objects.all()[0]
                 q.room_number = room_number
-                self.host_url = url
-                q.is_log = 'True'
                 q.save()
+                self.host_url = url
+                r = ConnInfo.objects.all()[0]
+                r.is_log = 'True'
+                r.save()
                 return 1
             else:
                 return 0
@@ -44,15 +45,18 @@ class CommSender:
     def test_connection(self):
         while True:
             time.sleep(1)
-            q = BaseInfo.objects.all()[0]
-            if q.is_log == "False":
+            q = RoomInfo.objects.all()[0]
+            c = ConnInfo.objects.all()[0]
+            m = ModeInfo.objects.all()[0]
+            if c.is_log == "False":
                 continue
             try:
                 r = requests.post(self.host_url, data={'type': 'query_mode', 'source': q.room_number}, timeout=2)
                 js = r.json()
-                q.mode = js['mode']
-                q.is_conn = 'True'
-                q.save()
+                m.mode = js['mode']
+                m.save()
+                c.is_conn = 'True'
+                c.save()
             except:
-                q.is_conn = 'False'
-                q.save()
+                c.is_conn = 'False'
+                c.save()
