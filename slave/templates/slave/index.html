@@ -21,7 +21,7 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col s6">
+            <div class="col s12 m6">
                 <div class="card-panel lime lighten-4">
                     <div class="row">
                         <div class="col s4 center-align">
@@ -29,12 +29,12 @@
                             <p>ROOM NUMBER</p>
                         </div>
                         <div class="col s8">
-                            <h5 class="flow-text">{{ room_number }}</h5>
+                            <h5 id="show_room_num"></h5>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col s6">
+            <div class="col s12 m6">
                 <div class="card-panel lime lighten-4">
                     <div class="row">
                         <div class="col s4 center-align">
@@ -42,28 +42,15 @@
                             <p>WORKING MODE</p>
                         </div>
                         <div class="col s8">
-                            <h5>
-                                {% if mode == 'cold' %}
-                                    制冷
-                                {% else %}
-                                    制热
-                                {% endif %}
-                            </h5>
-                            <p>
-
-                                {% if mode == 'cold' %}
-                                    COLD
-                                {% else %}
-                                    HOT
-                                {% endif %}
-                            </p>
+                            <h5 id="show_work_mode"></h5>
+                            <p id="show_work_mode_en"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col s12 m6">
+            <div class="col s12 m12 l6">
                 <div class="card-panel blue-grey lighten-4">
                     <div class="row">
                         <div class="col s4 center-align">
@@ -78,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col s12 m6">
+            <div class="col s12 m12 l6">
                 <div class="card-panel blue-grey lighten-4">
                     <div class="row">
                         <div class="col s4 center-align">
@@ -87,8 +74,8 @@
                             <p>ROOM TEMP</p>
                         </div>
                         <div class="col s8">
-                            <a class="digit-text">
-                                {{ current_temp }}℃
+                            <a id="show_room_temp" class="digit-text">
+                                --℃
                             </a>
                         </div>
                     </div>
@@ -101,7 +88,7 @@
                     <div class="row">
                         <div class="col s4 center-align">
                             <h5>风速</h5>
-                            <p>FAN</p>
+                            <p>FAN SPEED</p>
                         </div>
                         <div class="col s8">
                             <a class="wind-text" id="set_wind"></a>
@@ -112,20 +99,42 @@
                 </div>
             </div>
             <div class="col s12 m6">
-                <div class="card blue lighten-4">
+                <div class="card-panel blue lighten-4">
+                    <div class="row">
+                        <div class="col s4 center-align">
+                            <h5>当前风速</h5>
+                            <p>CURRENT SPEED</p>
+                        </div>
+                        <div class="col s8">
+                            <a class="wind-text" id="show_wind"></a>
+                            <a class="wind-bottom" id="show_wind_bottom"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card green lighten-4">
                     <div class="card-content">
                         <span class="card-title activator grey-text text-darken-4">
                             消费金额
                             <i class="material-icons right">more_vert</i>
                         </span>
-                        <p>500$</p>
+                        <p id="show_cost" class="cost-text center-align green-text darken-4">500$</p>
                     </div>
                     <div class="card-reveal">
                         <span class="card-title grey-text text-darken-4">
-                            标题
+                            消费详情
                             <i class="material-icons right">close</i>
                         </span>
-                        <p>这是详细情况</p>
+                        <p class="cost-detail">
+                            <a>用电量</a>
+                            <a id="show_power"></a>
+                            <a>kWh　×　单价</a>
+                            <a id="show_price"></a>
+                            <a>$/kWh</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -169,27 +178,7 @@
         </div>
 
     </div>
-    
-    <div class="container">
-        <div class="row">
-          <div class="input-field col s6">
-            <input id="last_name" type="text" class="validate">
-            <label for="last_name">Last Name</label>
-          </div>
-        </div>
 
-        <!-- Switch -->
-        <div class="switch">
-            <label>
-            Off
-            <input type="checkbox">
-            <span class="lever"></span>
-            On
-            </label>
-        </div>
-        
-    </div>
-    
     <!--Import jQuery before materialize.js-->
     <script type="text/javascript" src= {% static 'slave/js/jquery-2.1.1.min.js' %}></script>
     <script type="text/javascript" src={% static 'slave/js/materialize.min.js' %}></script>

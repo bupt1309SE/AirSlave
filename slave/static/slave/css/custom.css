@@ -12,6 +12,14 @@
   font-size: 4.5rem;
 }
 
+.cost-text {
+    font-size: 3rem;
+}
+
+.cost-detail {
+    font-size: 1.3rem;
+}
+
 .wind-text {
     font-weight: 500;
     font-size: 3rem;
