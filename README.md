@@ -3,5 +3,5 @@
   作者：刘清华
   
 # 要求
-  <dir>django = 1.9.6</dir>
-  <dir>requests</dir>
+  <br>django = 1.9.6</br>
+  <br>requests</br>
